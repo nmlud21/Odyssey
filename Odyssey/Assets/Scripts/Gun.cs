@@ -14,6 +14,8 @@ public class Gun : MonoBehaviour
 
     public int maxAmmo = 10;
     private int currentAmmo;
+    public int maxReserves;
+    public int currentReserves;
     public float reloadSpeed = 1f;
     private bool isReloading = false;
 
@@ -21,6 +23,7 @@ public class Gun : MonoBehaviour
     public ParticleSystem muzzleFlash;
     public Animator animator;
     public Text magazine;
+    public Text reserves;
     public CharacterController player;
     public GameObject weaponSwap;
 
@@ -31,6 +34,7 @@ public class Gun : MonoBehaviour
     void Start()
     {
         currentAmmo = maxAmmo;
+        currentReserves = maxReserves;
         animator.keepAnimatorControllerStateOnDisable = true; //prevents weapon reload animation from messing up gun when switching weapons
     }
 
@@ -41,13 +45,12 @@ public class Gun : MonoBehaviour
         animator.SetBool("Shooting", false);
         if (weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 0)
         {
-           animator.Play("WeaponIdle",0, 0f); 
+            animator.Play("WeaponIdle", 0, 0f);
         }
         else if (weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 1)
         {
             animator.Play("PistolIdle", 0, 0f);
         }
-        
     }
 
     void Update()
@@ -58,27 +61,34 @@ public class Gun : MonoBehaviour
         {
             return;
         }
-        
+
         if (currentAmmo <= 0 || (Input.GetKeyDown(KeyCode.R) && currentAmmo != maxAmmo)) //Reload
         {
             animator.SetBool("Shooting", false);
-            StartCoroutine(Reload());
+            if (currentReserves != 0)
+            {
+                StartCoroutine(Reload());
+            }
+            
             return;
+
         }
-        
-        if (Input.GetMouseButton(0) && Time.time >= nextTimeToFire && weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 0) //can use Fire1
+
+        if (Input.GetMouseButton(0) && Time.time >= nextTimeToFire &&
+            weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 0) //can use Fire1
         {
             //Sets fire rate to .25 sec intervals
             nextTimeToFire = Time.time + 1f / fireRate;
             Shoot();
         }
-        else if (Input.GetMouseButtonDown(0) && Time.time >= nextTimeToFire && weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 1) //Semi-auto pistol
+        else if (Input.GetMouseButtonDown(0) && Time.time >= nextTimeToFire &&
+                 weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 1) //Semi-auto pistol
         {
             nextTimeToFire = Time.time + 1f / fireRate;
             Shoot();
         }
-        
-        if (Input.GetMouseButtonUp(0)) 
+
+        if (Input.GetMouseButtonUp(0))
         {
             animator.SetBool("Shooting", false);
         }
@@ -108,10 +118,10 @@ public class Gun : MonoBehaviour
         currentAmmo--;
         magazine.text = currentAmmo.ToString();
         animator.SetBool("Shooting", true);
-        
+
         //Camera Recoil
         //recoilCamera.transform.Rotate(new Vector3(-recoilStrength, 0, 0));
-        
+
         RaycastHit hit;
         if (Physics.Raycast(fpsCamera.transform.position, fpsCamera.transform.forward, out hit, range, enemyMask))
         {
@@ -119,31 +129,40 @@ public class Gun : MonoBehaviour
 
             EnemyController enemy = hit.transform.GetComponent<EnemyController>();
             enemy.TakeDamage(damage);
-            
+
             // EnemyController enemy = GetComponent<EnemyController>();
             // if (hit.collider.CompareTag("Enemy"))
             // {
             //     enemy.TakeDamage(damage);
             // }
         }
-
     }
 
     IEnumerator Reload()
     {
-
         isReloading = true;
         //Debug.Log("Reloading...");
-        
+
         animator.SetBool("Reloading", true);
         //amount of seconds to wait for reload
         yield return new WaitForSeconds(reloadSpeed - .25f);
         animator.SetBool("Reloading", false);
         animator.SetBool("Aiming", false);
-        yield return new WaitForSeconds(.3f); //used so you cannot shoot before the reload animation is finsished
+        yield return new WaitForSeconds(.3f); //used so you cannot shoot before the reload animation is finished
         
-        currentAmmo = maxAmmo;
+        if (currentReserves >= maxAmmo)
+        {
+            currentReserves -= maxAmmo - currentAmmo;
+            currentAmmo = maxAmmo;
+        }
+        else if(currentReserves < maxAmmo && currentReserves > 0)
+        {
+            currentAmmo = currentReserves;
+            currentReserves = 0;
+        }
+        
         isReloading = false;
         magazine.text = currentAmmo.ToString();
+        reserves.text = currentReserves.ToString();
     }
 }
