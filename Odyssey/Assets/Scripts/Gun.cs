@@ -1,0 +1,149 @@
+﻿using System;
+using UnityEngine;
+using System.Collections;
+using UnityEngine.UI;
+using Random = System.Random;
+
+public class Gun : MonoBehaviour
+{
+    public float damage = 10f;
+    public float range = 100f;
+    public float fireRate = 15f;
+    private float nextTimeToFire = 0f;
+    public float recoilStrength = 5f;
+
+    public int maxAmmo = 10;
+    private int currentAmmo;
+    public float reloadSpeed = 1f;
+    private bool isReloading = false;
+
+    public Camera fpsCamera;
+    public ParticleSystem muzzleFlash;
+    public Animator animator;
+    public Text magazine;
+    public CharacterController player;
+    public GameObject weaponSwap;
+
+    public LayerMask enemyMask;
+    //public GameObject recoilCamera;
+
+
+    void Start()
+    {
+        currentAmmo = maxAmmo;
+        animator.keepAnimatorControllerStateOnDisable = true; //prevents weapon reload animation from messing up gun when switching weapons
+    }
+
+    private void OnEnable()
+    {
+        isReloading = false;
+        animator.SetBool("Reloading", false);
+        animator.SetBool("Shooting", false);
+        if (weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 0)
+        {
+           animator.Play("WeaponIdle",0, 0f); 
+        }
+        else if (weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 1)
+        {
+            animator.Play("PistolIdle", 0, 0f);
+        }
+        
+    }
+
+    void Update()
+    {
+        magazine.text = currentAmmo.ToString();
+
+        if (isReloading)
+        {
+            return;
+        }
+        
+        if (currentAmmo <= 0 || (Input.GetKeyDown(KeyCode.R) && currentAmmo != maxAmmo)) //Reload
+        {
+            animator.SetBool("Shooting", false);
+            StartCoroutine(Reload());
+            return;
+        }
+        
+        if (Input.GetMouseButton(0) && Time.time >= nextTimeToFire && weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 0) //can use Fire1
+        {
+            //Sets fire rate to .25 sec intervals
+            nextTimeToFire = Time.time + 1f / fireRate;
+            Shoot();
+        }
+        else if (Input.GetMouseButtonDown(0) && Time.time >= nextTimeToFire && weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 1) //Semi-auto pistol
+        {
+            nextTimeToFire = Time.time + 1f / fireRate;
+            Shoot();
+        }
+        
+        if (Input.GetMouseButtonUp(0)) 
+        {
+            animator.SetBool("Shooting", false);
+        }
+
+        if (player.GetComponent<PlayerMove>().isWalking) //Walking
+        {
+            animator.SetBool("Walking", true);
+        }
+        else
+        {
+            animator.SetBool("Walking", false);
+        }
+
+        if (Input.GetMouseButton(1)) //ADS
+        {
+            animator.SetBool("Aiming", true);
+        }
+        else
+        {
+            animator.SetBool("Aiming", false);
+        }
+    }
+
+    void Shoot()
+    {
+        muzzleFlash.Play();
+        currentAmmo--;
+        magazine.text = currentAmmo.ToString();
+        animator.SetBool("Shooting", true);
+        
+        //Camera Recoil
+        //recoilCamera.transform.Rotate(new Vector3(-recoilStrength, 0, 0));
+        
+        RaycastHit hit;
+        if (Physics.Raycast(fpsCamera.transform.position, fpsCamera.transform.forward, out hit, range, enemyMask))
+        {
+            Debug.Log(hit.transform.name);
+
+            EnemyController enemy = hit.transform.GetComponent<EnemyController>();
+            enemy.TakeDamage(damage);
+            
+            // EnemyController enemy = GetComponent<EnemyController>();
+            // if (hit.collider.CompareTag("Enemy"))
+            // {
+            //     enemy.TakeDamage(damage);
+            // }
+        }
+
+    }
+
+    IEnumerator Reload()
+    {
+
+        isReloading = true;
+        //Debug.Log("Reloading...");
+        
+        animator.SetBool("Reloading", true);
+        //amount of seconds to wait for reload
+        yield return new WaitForSeconds(reloadSpeed - .25f);
+        animator.SetBool("Reloading", false);
+        animator.SetBool("Aiming", false);
+        yield return new WaitForSeconds(.3f); //used so you cannot shoot before the reload animation is finsished
+        
+        currentAmmo = maxAmmo;
+        isReloading = false;
+        magazine.text = currentAmmo.ToString();
+    }
+}
