@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,21 +8,17 @@ public class PlayerMove : MonoBehaviour
     public CharacterController controller;
 
     public Transform groundCheck;
-    //public Transform ammoBoxCheck;
     public float groundDistance = 0.4f; //radius of sphere using to check ground collisions
     public LayerMask groundMask; //controls what objects the sphere checks for
-    //public LayerMask ammoMask;
 
     public float speed = 12f;
     public float gravity = -9.81f;
     public float jumpHeight = 3f;
 
     private bool isGrounded;
-    private bool collidedWithAmmoBox;
     public bool isWalking;
 
     private Vector3 velocity;
-
     
     // Update is called once per frame
     void Update()
@@ -32,16 +29,7 @@ public class PlayerMove : MonoBehaviour
         {
             velocity.y = -2f;
         }
-        
-        //checks if player collided with ammo box
-        // collidedWithAmmoBox = Physics.CheckSphere(ammoBoxCheck.position, 2f, ammoMask);
-        // {
-        //     if (collidedWithAmmoBox)
-        //     {
-        //         print("Picked up ammo");
-        //     }
-        // }
-        
+
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
@@ -62,11 +50,21 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             velocity.y += Mathf.Sqrt(jumpHeight * -2f * gravity);
-            
         }
 
         //Applies gravity to the player
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
+
+    // private void OnTriggerEnter(Collider other)
+    // {
+    //     other.tag = "Ammo Box";
+    //
+    //     if (other.gameObject.CompareTag("Ammo Box"))
+    //     {
+    //         print("Picked up ammo");
+    //         Destroy(other.gameObject);
+    //     }
+    // }
 }

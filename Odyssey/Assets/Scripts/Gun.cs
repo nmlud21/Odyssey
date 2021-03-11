@@ -35,6 +35,7 @@ public class Gun : MonoBehaviour
     {
         currentAmmo = maxAmmo;
         currentReserves = maxReserves;
+        reserves.text = currentReserves.ToString();
         animator.keepAnimatorControllerStateOnDisable = true; //prevents weapon reload animation from messing up gun when switching weapons
     }
 
@@ -129,6 +130,12 @@ public class Gun : MonoBehaviour
 
             EnemyController enemy = hit.transform.GetComponent<EnemyController>();
             enemy.TakeDamage(damage);
+
+            if (enemy.isDead)
+            {
+                currentReserves += 15;
+                reserves.text = currentReserves.ToString();
+            }
 
             // EnemyController enemy = GetComponent<EnemyController>();
             // if (hit.collider.CompareTag("Enemy"))

@@ -9,9 +9,10 @@ public class EnemyController : MonoBehaviour
 {
     public Transform player;
     public NavMeshAgent agent;
-    public LayerMask groundMask, playerMask;
     public GameObject ammoBox;
-    
+    public LayerMask groundMask, playerMask;
+
+    public bool isDead;
 
     public float health = 100f;
     public float enemyDamage;
@@ -40,6 +41,7 @@ public class EnemyController : MonoBehaviour
     {
         player = GameObject.Find("First Person Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        isDead = false;
     }
 
     // Update is called once per frame
@@ -160,21 +162,8 @@ public class EnemyController : MonoBehaviour
 
     void Die()
     {
+        isDead = true;
         Destroy(gameObject);
-
-        // if (Random.Range(1, 101) <= 50)
-        // {
-        //     Instantiate(ammoBox, transform.position, Quaternion.identity);
-        // }
-
-        int ammoDropRate = Random.Range(1, 101);
-        Debug.Log(ammoDropRate);
-        
-        if (ammoDropRate <= 30)
-        {
-            Vector3 ammoBoxSpawn = new Vector3(transform.position.x, transform.position.y - 2.25f, transform.position.z);
-            Instantiate(ammoBox, ammoBoxSpawn, Quaternion.identity);
-        }
     }
     
     private void OnDrawGizmosSelected()
