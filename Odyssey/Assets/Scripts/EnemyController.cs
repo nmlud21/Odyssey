@@ -9,8 +9,8 @@ public class EnemyController : MonoBehaviour
 {
     public Transform player;
     public NavMeshAgent agent;
-    public GameObject ammoBox;
     public LayerMask groundMask, playerMask;
+    public Animator enemyAnimator;
 
     public bool isDead;
 
@@ -80,6 +80,7 @@ public class EnemyController : MonoBehaviour
         if (!walkPointSet)
         {
             SearchWalkPoint();
+            enemyAnimator.SetBool("Walking", true);
             Debug.Log("Searching");
             
         }
@@ -124,25 +125,39 @@ public class EnemyController : MonoBehaviour
     
     void ChasePlayer()
     {
+        enemyAnimator.SetBool("Attacking", false);
         agent.SetDestination(player.position);
+        enemyAnimator.SetBool("Walking", true);
     }
     
     void AttackPlayer()
     {
 
         //Enemy won't move when attacking
+        enemyAnimator.SetBool("Walking", false);
         agent.SetDestination(transform.position);
         
         //enemy will look at the player
-        transform.LookAt(player);
+        RotateTowards(player);
+        
+        enemyAnimator.SetBool("Attacking", true);
         
         if (!alreadyAttacked)
         {
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
+            var startPostition = new Vector3(transform.position.x, transform.position.y + 2f, transform.position.z);
+            
+            Rigidbody rb = Instantiate(projectile, startPostition, Quaternion.identity).GetComponent<Rigidbody>();
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
+    }
+
+    private void RotateTowards(Transform target)
+    {
+        Vector3 direction = (target.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 8f);
     }
 
     void ResetAttack()

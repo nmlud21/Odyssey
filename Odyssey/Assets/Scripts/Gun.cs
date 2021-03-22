@@ -66,6 +66,7 @@ public class Gun : MonoBehaviour
         if (currentAmmo <= 0 || (Input.GetKeyDown(KeyCode.R) && currentAmmo != maxAmmo)) //Reload
         {
             animator.SetBool("Shooting", false);
+            animator.SetBool("Walking", false);
             if (currentReserves != 0)
             {
                 StartCoroutine(Reload());
