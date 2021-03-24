@@ -77,6 +77,8 @@ public class EnemyController : MonoBehaviour
 
     void Patrol()
     {
+        enemyAnimator.SetBool("Attacking", false);
+        
         if (!walkPointSet)
         {
             SearchWalkPoint();

@@ -18,6 +18,7 @@ public class Gun : MonoBehaviour
     public int currentReserves;
     public float reloadSpeed = 1f;
     private bool isReloading = false;
+    private bool hasReserves = true;
 
     public Camera fpsCamera;
     public ParticleSystem muzzleFlash;
@@ -63,16 +64,20 @@ public class Gun : MonoBehaviour
             return;
         }
 
-        if (currentAmmo <= 0 || (Input.GetKeyDown(KeyCode.R) && currentAmmo != maxAmmo)) //Reload
+        if ((currentAmmo <= 0 && hasReserves) || (Input.GetKeyDown(KeyCode.R) && currentAmmo != maxAmmo)) //Reload
         {
-            animator.SetBool("Shooting", false);
-            animator.SetBool("Walking", false);
             if (currentReserves != 0)
             {
                 StartCoroutine(Reload());
+                animator.SetBool("Shooting", false);
+                animator.SetBool("Walking", false);
             }
-            
-            return;
+            else
+            { 
+                animator.SetBool("Shooting", false);
+                hasReserves = false;
+                return;
+            }
 
         }
 
@@ -116,11 +121,14 @@ public class Gun : MonoBehaviour
 
     void Shoot()
     {
-        muzzleFlash.Play();
-        currentAmmo--;
-        magazine.text = currentAmmo.ToString();
-        animator.SetBool("Shooting", true);
-
+        if (currentAmmo != 0)
+        {
+            muzzleFlash.Play();
+            currentAmmo--;
+            magazine.text = currentAmmo.ToString();
+            animator.SetBool("Shooting", true);
+        }
+        
         //Camera Recoil
         //recoilCamera.transform.Rotate(new Vector3(-recoilStrength, 0, 0));
 
@@ -157,6 +165,15 @@ public class Gun : MonoBehaviour
         animator.SetBool("Reloading", false);
         animator.SetBool("Aiming", false);
         yield return new WaitForSeconds(.3f); //used so you cannot shoot before the reload animation is finished
+
+        if (currentReserves > 0)
+        {
+            hasReserves = true;
+        }
+        else
+        {
+            hasReserves = false;
+        }
         
         if (currentReserves >= maxAmmo)
         {
@@ -165,8 +182,12 @@ public class Gun : MonoBehaviour
         }
         else if(currentReserves < maxAmmo && currentReserves > 0)
         {
-            currentAmmo = currentReserves;
+            currentAmmo += currentReserves;
             currentReserves = 0;
+            if (currentAmmo > maxAmmo)
+            {
+                currentAmmo = maxAmmo;
+            }
         }
         
         isReloading = false;
