@@ -27,6 +27,7 @@ public class Gun : MonoBehaviour
     public Text reserves;
     public CharacterController player;
     public GameObject weaponSwap;
+    public GameObject crosshair;
 
     public LayerMask enemyMask;
     //public GameObject recoilCamera;
@@ -109,13 +110,24 @@ public class Gun : MonoBehaviour
             animator.SetBool("Walking", false);
         }
 
+        if (player.GetComponent<PlayerMove>().isSprinting)
+        {
+            animator.SetBool("Sprinting", true);
+        }
+        else
+        {
+            animator.SetBool("Sprinting", false);
+        }
+
         if (Input.GetMouseButton(1)) //ADS
         {
             animator.SetBool("Aiming", true);
+            crosshair.SetActive(false);
         }
         else
         {
             animator.SetBool("Aiming", false);
+            crosshair.SetActive(true);
         }
     }
 

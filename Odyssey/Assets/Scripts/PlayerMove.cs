@@ -16,7 +16,8 @@ public class PlayerMove : MonoBehaviour
     public float jumpHeight = 3f;
 
     private bool isGrounded;
-    public bool isWalking;
+    [HideInInspector] public bool isWalking;
+    [HideInInspector] public bool isSprinting;
 
     private Vector3 velocity;
     
@@ -36,7 +37,17 @@ public class PlayerMove : MonoBehaviour
         //gets axis for movement
         Vector3 move = transform.right * x + transform.forward * z;
 
-        controller.Move(move * speed * Time.deltaTime);
+        if (Input.GetKey(KeyCode.LeftShift) && isWalking)
+        {
+            speed = 22;
+            isSprinting = true;
+        }
+        else
+        {
+            speed = 12;
+            isSprinting = false;
+        }
+        
         if (x != 0 || z != 0)
         {
             isWalking = true;
@@ -46,6 +57,8 @@ public class PlayerMove : MonoBehaviour
             isWalking = false;
         }
 
+        controller.Move(move * speed * Time.deltaTime);
+        
         //Jump if spacebar is pressed
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
