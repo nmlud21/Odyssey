@@ -109,9 +109,9 @@ public class EnemyController : MonoBehaviour
         float randomZ = Random.Range(-walkPointRange, walkPointRange);
         float randomX = Random.Range(-walkPointRange, walkPointRange);
         
-        //walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
         
-        walkPoint = new Vector3(randomX, transform.position.y, randomZ);
+        //walkPoint = new Vector3(randomX, transform.position.y, randomZ);
         
         //Debug.Log(walkPoint);
 
