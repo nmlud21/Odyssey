@@ -24,50 +24,53 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //checks for being on ground
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        if (isGrounded && velocity.y < 0)
+        if (PauseMenu.gameIsPaused == false) //if game is not paused
         {
-            velocity.y = -2f;
-        }
+            //checks for being on ground
+            isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+            if (isGrounded && velocity.y < 0)
+            {
+                velocity.y = -2f;
+            }
 
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+            float x = Input.GetAxis("Horizontal");
+            float z = Input.GetAxis("Vertical");
 
-        //gets axis for movement
-        Vector3 move = transform.right * x + transform.forward * z;
+            //gets axis for movement
+            Vector3 move = transform.right * x + transform.forward * z;
 
-        if (Input.GetKey(KeyCode.LeftShift) && isWalking)
-        {
-            speed = 22;
-            isSprinting = true;
-        }
-        else
-        {
-            speed = 12;
-            isSprinting = false;
-        }
+            if (Input.GetKey(KeyCode.LeftShift) && isWalking)
+            {
+                speed = 22;
+                isSprinting = true;
+            }
+            else
+            {
+                speed = 12;
+                isSprinting = false;
+            }
         
-        if (x != 0 || z != 0)
-        {
-            isWalking = true;
-        }
-        else
-        {
-            isWalking = false;
-        }
+            if (x != 0 || z != 0)
+            {
+                isWalking = true;
+            }
+            else
+            {
+                isWalking = false;
+            }
 
-        controller.Move(move * speed * Time.deltaTime);
+            controller.Move(move * speed * Time.deltaTime);
         
-        //Jump if spacebar is pressed
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            velocity.y += Mathf.Sqrt(jumpHeight * -2f * gravity);
-        }
+            //Jump if spacebar is pressed
+            if (Input.GetButtonDown("Jump") && isGrounded)
+            {
+                velocity.y += Mathf.Sqrt(jumpHeight * -2f * gravity);
+            }
 
-        //Applies gravity to the player
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+            //Applies gravity to the player
+            velocity.y += gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
+        }
     }
 
     // private void OnTriggerEnter(Collider other)

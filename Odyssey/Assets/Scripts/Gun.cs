@@ -58,77 +58,82 @@ public class Gun : MonoBehaviour
 
     void Update()
     {
-        magazine.text = currentAmmo.ToString();
 
-        if (isReloading)
+        if (PauseMenu.gameIsPaused == false)
         {
-            return;
-        }
+            magazine.text = currentAmmo.ToString();
 
-        if ((currentAmmo <= 0 && hasReserves) || (Input.GetKeyDown(KeyCode.R) && currentAmmo != maxAmmo)) //Reload
-        {
-            if (currentReserves != 0)
+            if (isReloading)
             {
-                StartCoroutine(Reload());
-                animator.SetBool("Shooting", false);
-                animator.SetBool("Walking", false);
-            }
-            else
-            { 
-                animator.SetBool("Shooting", false);
-                hasReserves = false;
                 return;
             }
 
-        }
+            if ((currentAmmo <= 0 && hasReserves) || (Input.GetKeyDown(KeyCode.R) && currentAmmo != maxAmmo)) //Reload
+            {
+                if (currentReserves != 0)
+                {
+                    StartCoroutine(Reload());
+                    animator.SetBool("Shooting", false);
+                    animator.SetBool("Walking", false);
+                }
+                else
+                { 
+                    animator.SetBool("Shooting", false);
+                    hasReserves = false;
+                    return;
+                }
 
-        if (Input.GetMouseButton(0) && Time.time >= nextTimeToFire &&
-            weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 0) //can use Fire1
-        {
-            //Sets fire rate to .25 sec intervals
-            nextTimeToFire = Time.time + 1f / fireRate;
-            Shoot();
-        }
-        else if (Input.GetMouseButtonDown(0) && Time.time >= nextTimeToFire &&
-                 weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 1) //Semi-auto pistol
-        {
-            nextTimeToFire = Time.time + 1f / fireRate;
-            Shoot();
-        }
+            }
 
-        if (Input.GetMouseButtonUp(0))
-        {
-            animator.SetBool("Shooting", false);
-        }
+            if (Input.GetMouseButton(0) && Time.time >= nextTimeToFire &&
+                weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 0) //can use Fire1
+            {
+                //Sets fire rate to .25 sec intervals
+                nextTimeToFire = Time.time + 1f / fireRate;
+                Shoot();
+            }
+            else if (Input.GetMouseButtonDown(0) && Time.time >= nextTimeToFire &&
+                     weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 1) //Semi-auto pistol
+            {
+                nextTimeToFire = Time.time + 1f / fireRate;
+                Shoot();
+            }
 
-        if (player.GetComponent<PlayerMove>().isWalking) //Walking
-        {
-            animator.SetBool("Walking", true);
-        }
-        else
-        {
-            animator.SetBool("Walking", false);
-        }
+            if (Input.GetMouseButtonUp(0))
+            {
+                animator.SetBool("Shooting", false);
+            }
 
-        if (player.GetComponent<PlayerMove>().isSprinting)
-        {
-            animator.SetBool("Sprinting", true);
-        }
-        else
-        {
-            animator.SetBool("Sprinting", false);
-        }
+            if (player.GetComponent<PlayerMove>().isWalking) //Walking
+            {
+                animator.SetBool("Walking", true);
+            }
+            else
+            {
+                animator.SetBool("Walking", false);
+            }
 
-        if (Input.GetMouseButton(1)) //ADS
-        {
-            animator.SetBool("Aiming", true);
-            crosshair.SetActive(false);
+            if (player.GetComponent<PlayerMove>().isSprinting)
+            {
+                animator.SetBool("Sprinting", true);
+            }
+            else
+            {
+                animator.SetBool("Sprinting", false);
+            }
+
+            if (Input.GetMouseButton(1)) //ADS
+            {
+                animator.SetBool("Aiming", true);
+                crosshair.SetActive(false);
+            }
+            else
+            {
+                animator.SetBool("Aiming", false);
+                crosshair.SetActive(true);
+            }
         }
-        else
-        {
-            animator.SetBool("Aiming", false);
-            crosshair.SetActive(true);
-        }
+        
     }
 
     void Shoot()

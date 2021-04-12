@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MouseLook : MonoBehaviour
 {
-    public float mouseSensitivity = 100f;
+    public float mouseSensitivity = 90f;
     private float xRotation = 0f;
 
     public Transform playerBody;
@@ -19,15 +19,18 @@ public class MouseLook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Gets which axis your mouse is moving on
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        if (PauseMenu.gameIsPaused == false)
+        {
+            //Gets which axis your mouse is moving on
+            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        //decrease rotation based on mouse Y
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f); //limits rotation to 180 to avoid looking behind the player
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f); //Applies the rotation
-        //rotates body on x-axis
-        playerBody.Rotate(Vector3.up * mouseX);
+            //decrease rotation based on mouse Y
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -90f, 90f); //limits rotation to 180 to avoid looking behind the player
+            transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f); //Applies the rotation
+            //rotates body on x-axis
+            playerBody.Rotate(Vector3.up * mouseX);
+        }
     }
 }
