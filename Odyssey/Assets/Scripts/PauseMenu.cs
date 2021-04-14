@@ -20,15 +20,18 @@ public class PauseMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (CrystalInteract.gameOver == false)
         {
-            if (gameIsPaused)
+            if (Input.GetKeyDown(KeyCode.Tab))
             {
-                Resume();
-            }
-            else
-            {
-                Pause();
+                if (gameIsPaused)
+                {
+                    Resume();
+                }
+                else
+                {
+                    Pause();
+                }
             }
         }
     }

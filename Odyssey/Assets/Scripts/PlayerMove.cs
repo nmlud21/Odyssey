@@ -24,7 +24,7 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PauseMenu.gameIsPaused == false) //if game is not paused
+        if (PauseMenu.gameIsPaused == false || CrystalInteract.gameOver == false) //if game is not paused
         {
             //checks for being on ground
             isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);

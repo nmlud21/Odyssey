@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -63,13 +64,26 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            PlayerDeath();
+            StartCoroutine(PlayerDeath());
         }
     }
 
-    void PlayerDeath()
+    public GameObject deathScreen;
+
+    IEnumerator PlayerDeath()
     {
-        Destroy(gameObject);
+        deathScreen.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        
+        yield return new WaitForSeconds(1f);
+
+        Time.timeScale = 0f;
+    }
+
+    public void Restart()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
 
     void HealthRegen()
@@ -77,7 +91,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth += 20;
         healthBar.SetHealth(currentHealth);
     }
-    
+
     // IEnumerator HealthRegen()
     // {
     //      isRegenActive = true;

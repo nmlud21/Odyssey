@@ -5,7 +5,7 @@ using UnityEngine;
 public class MouseLook : MonoBehaviour
 {
     public float mouseSensitivity = 90f;
-    private float xRotation = 0f;
+    private float xRotation;
 
     public Transform playerBody;
     
@@ -19,7 +19,7 @@ public class MouseLook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PauseMenu.gameIsPaused == false)
+        if (PauseMenu.gameIsPaused == false || CrystalInteract.gameOver == false)
         {
             //Gets which axis your mouse is moving on
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;

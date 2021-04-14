@@ -59,7 +59,7 @@ public class Gun : MonoBehaviour
     void Update()
     {
 
-        if (PauseMenu.gameIsPaused == false)
+        if (PauseMenu.gameIsPaused == false || CrystalInteract.gameOver == false)
         {
             magazine.text = currentAmmo.ToString();
 
@@ -70,33 +70,41 @@ public class Gun : MonoBehaviour
 
             if ((currentAmmo <= 0 && hasReserves) || (Input.GetKeyDown(KeyCode.R) && currentAmmo != maxAmmo)) //Reload
             {
-                if (currentReserves != 0)
+                if (player.GetComponent<PlayerMove>().isSprinting == false)
                 {
-                    StartCoroutine(Reload());
-                    animator.SetBool("Shooting", false);
-                    animator.SetBool("Walking", false);
+                    if (currentReserves != 0)
+                    {
+                        StartCoroutine(Reload());
+                        animator.SetBool("Shooting", false);
+                        animator.SetBool("Walking", false);
+                    }
+                    else
+                    { 
+                        animator.SetBool("Shooting", false);
+                        hasReserves = false;
+                        return;
+                    }
                 }
-                else
-                { 
-                    animator.SetBool("Shooting", false);
-                    hasReserves = false;
-                    return;
-                }
-
             }
 
             if (Input.GetMouseButton(0) && Time.time >= nextTimeToFire &&
                 weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 0) //can use Fire1
             {
-                //Sets fire rate to .25 sec intervals
-                nextTimeToFire = Time.time + 1f / fireRate;
-                Shoot();
+                if (player.GetComponent<PlayerMove>().isSprinting == false)
+                {
+                    //Sets fire rate to .25 sec intervals
+                    nextTimeToFire = Time.time + 1f / fireRate;
+                    Shoot();
+                }
             }
             else if (Input.GetMouseButtonDown(0) && Time.time >= nextTimeToFire &&
                      weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 1) //Semi-auto pistol
             {
-                nextTimeToFire = Time.time + 1f / fireRate;
-                Shoot();
+                if (player.GetComponent<PlayerMove>().isSprinting == false)
+                {
+                    nextTimeToFire = Time.time + 1f / fireRate;
+                    Shoot();
+                }
             }
 
             if (Input.GetMouseButtonUp(0))
