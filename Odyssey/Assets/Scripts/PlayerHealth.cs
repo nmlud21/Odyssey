@@ -47,8 +47,11 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        TakePlayerDamage(enemy.enemyDamage);
-        Destroy(other.gameObject);
+        if (other.gameObject.tag == "Projectile")
+        {
+            TakePlayerDamage(enemy.enemyDamage);
+            Destroy(other.gameObject);
+        }
     }
 
     public void TakePlayerDamage(float amount)

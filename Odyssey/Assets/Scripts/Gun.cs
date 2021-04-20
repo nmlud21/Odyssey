@@ -46,6 +46,7 @@ public class Gun : MonoBehaviour
         isReloading = false;
         animator.SetBool("Reloading", false);
         animator.SetBool("Shooting", false);
+        reserves.text = currentReserves.ToString();
         if (weaponSwap.GetComponent<WeaponSwap>().selectedWeapon == 0)
         {
             animator.Play("WeaponIdle", 0, 0f);
