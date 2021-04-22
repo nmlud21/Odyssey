@@ -72,15 +72,4 @@ public class PlayerMove : MonoBehaviour
             controller.Move(velocity * Time.deltaTime);
         }
     }
-
-    // private void OnTriggerEnter(Collider other)
-    // {
-    //     other.tag = "Ammo Box";
-    //
-    //     if (other.gameObject.CompareTag("Ammo Box"))
-    //     {
-    //         print("Picked up ammo");
-    //         Destroy(other.gameObject);
-    //     }
-    // }
 }

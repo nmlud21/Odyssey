@@ -10,8 +10,11 @@ public class TriggerUI : MonoBehaviour
     public GameObject textBox;
     public Text gameText;
 
+    public Camera mainCamera;
+    public Camera cutsceneCamera;
+
     private int tutorialUIindex = 1;
-    
+
     private void OnTriggerEnter(Collider player)
     {
         if (player.gameObject.tag == "Player")
@@ -36,10 +39,12 @@ public class TriggerUI : MonoBehaviour
             }
             else if (tutorialUIindex == 5)
             {
-                gameText.text = "Press TAB to open the settings menu.";
+                gameText.text = "Press ESC to open the settings menu.";
             }
-            
-            //todo more tutorial tips
+            else if (tutorialUIindex == 6)
+            {
+                gameText.text = "Make your way around the map to investigate where the secret signal is coming from.";
+            }
 
             StartCoroutine(displayUI());
 
@@ -48,7 +53,11 @@ public class TriggerUI : MonoBehaviour
 
     IEnumerator displayUI()
     {
-        yield return new WaitForSeconds(3.5f);
+        if (tutorialUIindex < 6)
+        {
+            yield return new WaitForSeconds(3.5f);
+        }
+        
         if (tutorialUIindex == 1)
         {
             gameManager.transform.position = new Vector3(157, 2, 806);
@@ -66,7 +75,34 @@ public class TriggerUI : MonoBehaviour
         {
             gameManager.transform.position = new Vector3(225, 2, 600);
         }
-        
+        else if (tutorialUIindex == 5)
+        {
+            gameManager.transform.position = new Vector3(235, 2, 529.8f);
+            gameManager.transform.rotation = Quaternion.Euler(0, -19.246f, 0);
+        }
+        else if (tutorialUIindex == 6)
+        {
+            mainCamera.gameObject.SetActive(false);
+            cutsceneCamera.gameObject.SetActive(true);
+
+            Time.timeScale = 0f;
+            
+            yield return new WaitForSecondsRealtime(4f);
+            
+            textBox.SetActive(false);
+            
+            yield return new WaitForSecondsRealtime(2f);
+
+            Time.timeScale = 1f;
+
+            cutsceneCamera.gameObject.SetActive(false);
+            mainCamera.gameObject.SetActive(true);
+            
+            gameManager.SetActive(false);
+
+            yield break;
+        }
+
         textBox.SetActive(false);
         tutorialUIindex++;
     }
