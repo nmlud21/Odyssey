@@ -150,6 +150,7 @@ public class Gun : MonoBehaviour
         if (currentAmmo != 0)
         {
             muzzleFlash.Play();
+            FindObjectOfType<AudioManager>().Play("GunShot");
             currentAmmo--;
             magazine.text = currentAmmo.ToString();
             animator.SetBool("Shooting", true);
@@ -188,6 +189,7 @@ public class Gun : MonoBehaviour
         animator.SetBool("Reloading", true);
         //amount of seconds to wait for reload
         yield return new WaitForSeconds(reloadSpeed - .25f);
+        FindObjectOfType<AudioManager>().Play("Reload");
         animator.SetBool("Reloading", false);
         animator.SetBool("Aiming", false);
         yield return new WaitForSeconds(.3f); //used so you cannot shoot before the reload animation is finished
