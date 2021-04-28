@@ -22,7 +22,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (CrystalInteract.gameOver == false)
         {
-            if (Input.GetKeyDown(KeyCode.Tab))
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
                 if (gameIsPaused)
                 {
