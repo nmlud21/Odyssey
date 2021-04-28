@@ -53,11 +53,6 @@ public class TriggerUI : MonoBehaviour
 
     IEnumerator displayUI()
     {
-        if (tutorialUIindex < 6)
-        {
-            yield return new WaitForSeconds(3.5f);
-        }
-        
         if (tutorialUIindex == 1)
         {
             gameManager.transform.position = new Vector3(157, 2, 806);
@@ -103,6 +98,8 @@ public class TriggerUI : MonoBehaviour
             yield break;
         }
 
+        yield return new WaitForSeconds(3.5f);
+        
         textBox.SetActive(false);
         tutorialUIindex++;
     }
