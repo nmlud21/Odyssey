@@ -68,7 +68,7 @@ public class CrystalInteract : MonoBehaviour
 
     public void MainMenu()
     {
-        Debug.Log("MENU");
+        gameOver = false;
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -1);
     }
