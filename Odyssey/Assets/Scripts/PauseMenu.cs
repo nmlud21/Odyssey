@@ -8,11 +8,14 @@ public class PauseMenu : MonoBehaviour
     public static bool gameIsPaused = false;
 
     public MouseLook look;
+    public Camera mainCamera;
 
     public GameObject pauseMenu;
     
     public Slider sensitivitySlider;
+    public Slider fovSlider;
     public Text sensitivityText;
+    public Text fovText;
 
     public GameObject pauseButtons;
     public GameObject settingsMenu;
@@ -77,5 +80,11 @@ public class PauseMenu : MonoBehaviour
     {
         look.mouseSensitivity = sensitivitySlider.value;
         sensitivityText.text = "Sensitivity: " + look.mouseSensitivity;
+    }
+    
+    public void SetFieldOfView()
+    {
+        mainCamera.fieldOfView = fovSlider.value;
+        fovText.text = "FOV: " + mainCamera.fieldOfView;
     }
 }
